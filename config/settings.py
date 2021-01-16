@@ -1,6 +1,5 @@
 import os
 
-
 from decouple import config
 
 from django.conf import settings
@@ -9,18 +8,15 @@ from pathlib import Path
 
 from datetime import timedelta
 
-
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 SECRET_KEY = '%8@*zy^tpe*cze_@ai2cru#c#uij3xtcr98q0ww&b1v)_pixud'
 DEBUG = True
 ALLOWED_HOSTS = ['*']
 
-
 INSTALLED_APPS = [
 
     'account_system_api.apps.AccountSystemApiConfig',
     'office_api.apps.OfficeApiConfig',
-
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -29,14 +25,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-
     'rest_framework',
     'djoser',
     'drf_yasg',
     'debug_toolbar',
 
 ]
-
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -49,9 +43,7 @@ MIDDLEWARE = [
     'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
-
 ROOT_URLCONF = 'config.urls'
-
 
 TEMPLATES = [
     {
@@ -69,9 +61,7 @@ TEMPLATES = [
     },
 ]
 
-
 WSGI_APPLICATION = 'config.wsgi.application'
-
 
 DATABASES = {
     'default': {
@@ -83,7 +73,6 @@ DATABASES = {
         'PORT': '5432',
     }
 }
-
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -100,7 +89,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 AUTH_USER_MODEL = 'account_system_api.Account'
 
 REST_FRAMEWORK = {
@@ -109,7 +97,6 @@ REST_FRAMEWORK = {
     ),
 
 }
-
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(hours=24),
@@ -139,7 +126,6 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
 
-
 LANGUAGE_CODE = 'ru'
 TIME_ZONE = 'Europe/Moscow'
 
@@ -147,25 +133,16 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
-# STATIC_URL = '/static/'
+STATIC_URL = '/static/'
 # STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
 
-
-PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
-STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
-
-
 STATIC_ROOT = os.path.normpath(os.path.join(BASE_DIR, 'staticfiles'))
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static'),
-)
 
 MEDIA_URL = '/media/'
-
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
@@ -174,8 +151,6 @@ INTERNAL_IPS = [
 ]
 
 import dj_database_url
-
-
 
 prod_db = dj_database_url.config(conn_max_age=500)
 DATABASES['default'].update(prod_db)
