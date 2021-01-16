@@ -129,15 +129,15 @@ class ReservationAPI(CreateUpdateDestroyListRetrieve, viewsets.GenericViewSet):
         date_to = self.kwargs['date_to']
 
         free_time_rent = Office.objects.prefetch_related(
-            'booking').exclude(
-            Q(booking__date_from__range=(date_from, date_to)) | Q(
-                booking__date_to__range=(date_to, date_to))
+            'reservations').exclude(
+            Q(reservations__date_from__range=(date_from, date_to)) | Q(
+                reservations__date_to__range=(date_to, date_to))
         ).exclude(
-            booking__date_from__lte=date_from,
-            booking__date_to__gte=date_to
+            reservations__date_from__lte=date_from,
+            reservations__date_to__gte=date_to
         ).exclude(
-            booking__date_from__lte=date_to,
-            booking__date_to__gte=date_from
+            reservations__date_from__lte=date_to,
+            reservations__date_to__gte=date_from
         )
         serializer = OfficeSerializer(free_time_rent, many=True)
         return Response(serializer.data)
