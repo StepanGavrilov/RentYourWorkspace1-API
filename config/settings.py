@@ -1,6 +1,5 @@
 import os
 
-import dj_database_url
 from decouple import config
 
 from django.conf import settings
@@ -11,7 +10,7 @@ from datetime import timedelta
 
 
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
-SECRET_KEY = config('SECRET_KEY')
+SECRET_KEY = '%8@*zy^tpe*cze_@ai2cru#c#uij3xtcr98q0ww&b1v)_pixud'
 DEBUG = True
 ALLOWED_HOSTS = ['*']
 
@@ -78,11 +77,11 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': config('DB_NAME'),
-        'USER': config('DB_USER'),
-        'PASSWORD': config('DB_PASSWORD'),
-        # 'HOST': config('DB_HOST'),
-        # 'PORT': config('DB_PORT'),
+        'NAME': 'rentworkplace',
+        'USER': 'postgres',
+        'PASSWORD': '1',
+        # 'HOST': 'localhost,
+        # 'PORT': '5432,
     }
 }
 
