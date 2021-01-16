@@ -81,8 +81,8 @@ DATABASES = {
         'NAME': 'rentworkplace',
         'USER': 'postgres',
         'PASSWORD': '1',
-        # 'HOST': 'localhost,
-        # 'PORT': '5432,
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
@@ -161,17 +161,7 @@ INTERNAL_IPS = [
 ]
 
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'rentworkplace',
-        'USER': 'postgres',
-        'PASSWORD': '1',
-    }
-}
-
-
-prod_db = dj_database_url.config(conn_max_age=500)
-DATABASES['default'].update(prod_db)
+# prod_db = dj_database_url.config(conn_max_age=500)
+# DATABASES['default'].update(prod_db)
 
 

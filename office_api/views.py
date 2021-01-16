@@ -1,5 +1,5 @@
 from django.db.models import Q
-from rest_framework import viewsets, permissions, status, mixins
+from rest_framework import viewsets, status, mixins
 from rest_framework.response import Response
 
 from .base.classes import CreateUpdateDestroyListRetrieve
@@ -81,17 +81,12 @@ class FreeOfficeView(mixins.ListModelMixin, viewsets.GenericViewSet):
             datetime_to = self.request.data['datetime_to']
         except KeyError:
             return Response(status=status.HTTP_404_NOT_FOUND)
-        time = Office.objects.prefetch_related(
-            'reservation').exclude(
-            Q(reservation__datetime_from__range=(datetime_from, datetime_to)) | Q(
-                reservation__datetime_to__range=(datetime_to, datetime_to))
-        ).exclude(
-            reservation__datetime_from__lte=datetime_from,
-            reservation__datetime_to__gte=datetime_to
-        ).exclude(
-            reservation__datetime_from__lte=datetime_to,
-            reservation__datetime_to__gte=datetime_from
-        )
+
+        time = Office.objects.prefetch_related('reservation').exclude(
+            Q(reservation__datetime_from__range=(datetime_from, datetime_to))).exclude(
+            reservation__datetime_from__lte=datetime_from).exclude(
+            reservation__datetime_to__gte=datetime_from)
+
         serializer = OfficeReservationSerializer(time, many=True)
         return Response(serializer.data)
 

@@ -9,6 +9,9 @@ from .models import Reservation, Office
 
 
 class OfficeSerializer(serializers.ModelSerializer):
+    """
+    Оффис общий сериализатор
+    """
 
     class Meta:
         model = Office
@@ -20,6 +23,9 @@ class OfficeSerializer(serializers.ModelSerializer):
 
 
 class OfficeReservationSerializer(serializers.ModelSerializer):
+    """
+    Оффис + Брони
+    """
 
     datetime_from = serializers.DateTimeField(required=False)
     datetime_to = serializers.DateTimeField(required=False)
@@ -30,6 +36,9 @@ class OfficeReservationSerializer(serializers.ModelSerializer):
 
 
 class OfficeUpdateSerializer(serializers.ModelSerializer):
+    """
+    Обновление информации о оффисе
+    """
 
     name = serializers.CharField(max_length=32, required=False)
     description = serializers.CharField(max_length=512, required=False)
@@ -46,6 +55,11 @@ class OfficeUpdateSerializer(serializers.ModelSerializer):
 
 
 class ReservationSerializer(serializers.ModelSerializer):
+    """
+    Полная информация о брони
+
+    customer -> django.setting.AUTH_USER_MODEL
+    """
 
     customer = AccountSerializer()
 
@@ -56,6 +70,9 @@ class ReservationSerializer(serializers.ModelSerializer):
 
 
 class ReservationCreateUpdateSerializer(serializers.ModelSerializer):
+    """
+    Создаём / Обновляем бронь
+    """
 
     office = serializers.IntegerField(source='office_id')
 
@@ -64,6 +81,15 @@ class ReservationCreateUpdateSerializer(serializers.ModelSerializer):
         fields = ('id', 'office', 'datetime_from', 'datetime_to')
 
     def create(self, validated_data):
+        """
+        Создания брони состоит из проверки 3 уровней
+
+        office_id -> офис, где хотим арендовать помещение
+        level1 -> Проверяем rangeОм (Начало, Конец) - включающий
+        start_rent -> Начало аренды (Может равнятся концу аренды другого человека)
+        end_rent -> Конец аренды
+        """
+
         start_rent = validated_data['datetime_from']
         end_rent = validated_data['datetime_to']
         office_id = validated_data['office_id']
@@ -72,22 +98,18 @@ class ReservationCreateUpdateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(code=status.HTTP_400_BAD_REQUEST)
 
         level_1 = Reservation.objects.select_related().filter(
-            Q(datetime_from__range=(start_rent, end_rent)) | Q(
-                datetime_to__range=(end_rent, end_rent)), office=office_id)
+            Q(datetime_from__range=(start_rent, end_rent)) | Q(datetime_to__range=(end_rent, end_rent)),
+            office=office_id)
 
-        level_2 = Reservation.objects.select_related().filter(
-            datetime_from__lte=start_rent, datetime_to__gte=end_rent, office=office_id)
+        check = (level_1.exists())
 
-        level_3 = Reservation.objects.select_related().filter(
-            datetime_from__lte=end_rent,
-            datetime_to__gte=start_rent, office=office_id)
-
-        check = (level_1.exists() | level_2.exists() | level_3.exists())
-
-        if check:
-            raise serializers.ValidationError(code=status.HTTP_400_BAD_REQUEST)
-        reservation = Reservation.objects.create(**validated_data)
-        return reservation
+        if not check:
+            """
+            Если нет аренды
+            """
+            reservation = Reservation.objects.create(**validated_data)
+            return reservation
+        raise serializers.ValidationError(code=status.HTTP_400_BAD_REQUEST)
 
     def update(self, instance, validated_data):
         for (key, value) in validated_data.items():
