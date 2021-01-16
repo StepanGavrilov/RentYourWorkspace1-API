@@ -4,6 +4,9 @@ from .models import Account
 
 
 class AccountSerializer(serializers.ModelSerializer):
+    """
+    Базовый сериализатор для Аккаунта
+    """
 
     class Meta:
         model = Account
@@ -11,6 +14,9 @@ class AccountSerializer(serializers.ModelSerializer):
 
 
 class AccountUpdateSerializer(serializers.ModelSerializer):
+    """
+    Create serializer
+    """
 
     username = serializers.CharField(max_length=32, required=False)
     email = serializers.EmailField(max_length=64, required=False)
@@ -27,12 +33,15 @@ class AccountUpdateSerializer(serializers.ModelSerializer):
 
 
 class AccountCreateSerializer(serializers.ModelSerializer):
+    """
+     Update serializer
+     """
 
     class Meta:
         model = Account
         fields = ('id', 'username', 'email', 'password')
 
-    def create(self, validated_data):
+    def create(self, validated_data) -> Account:
         account = Account.objects.create_user(**validated_data)
         return account
 
