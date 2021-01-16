@@ -19,6 +19,16 @@ class OfficeSerializer(serializers.ModelSerializer):
         return office
 
 
+class OfficeReservationSerializer(serializers.ModelSerializer):
+
+    datetime_from = serializers.DateTimeField(required=False)
+    datetime_to = serializers.DateTimeField(required=False)
+
+    class Meta:
+        model = Office
+        fields = ('id', 'name', 'description', 'datetime_from', 'datetime_to')
+
+
 class OfficeUpdateSerializer(serializers.ModelSerializer):
 
     name = serializers.CharField(max_length=32, required=False)
@@ -38,8 +48,6 @@ class OfficeUpdateSerializer(serializers.ModelSerializer):
 class ReservationSerializer(serializers.ModelSerializer):
 
     customer = AccountSerializer()
-    datetime_from = serializers.DateTimeField(required=False)
-    datetime_to = serializers.DateTimeField(required=False)
 
     class Meta:
         model = Reservation

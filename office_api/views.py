@@ -1,12 +1,12 @@
 from django.db.models import Q
-from rest_framework import viewsets, permissions, status
+from rest_framework import viewsets, permissions, status, mixins
 from rest_framework.response import Response
 
 from .base.classes import CreateUpdateDestroyListRetrieve
 
 from .models import Reservation, Office
 from .serializers import OfficeSerializer, OfficeUpdateSerializer, ReservationSerializer, \
-    ReservationCreateUpdateSerializer
+    ReservationCreateUpdateSerializer, OfficeReservationSerializer
 
 
 class OfficeAPI(CreateUpdateDestroyListRetrieve, viewsets.GenericViewSet):
@@ -19,6 +19,8 @@ class OfficeAPI(CreateUpdateDestroyListRetrieve, viewsets.GenericViewSet):
     def get_serializer_class(self):
         if self.action == 'update':
             return OfficeUpdateSerializer
+        if self.action == 'retrieve':
+            return OfficeReservationSerializer
         else:
             return OfficeSerializer
 
@@ -66,6 +68,32 @@ class OfficeAPI(CreateUpdateDestroyListRetrieve, viewsets.GenericViewSet):
             self.perform_destroy(instance)
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+class FreeOfficeView(mixins.ListModelMixin, viewsets.GenericViewSet):
+    """
+    Free workspaces
+    """
+
+    def list(self, request, *args, **kwargs) -> Response:
+        try:
+            datetime_from = self.request.data['datetime_from']
+            datetime_to = self.request.data['datetime_to']
+        except KeyError:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        time = Office.objects.prefetch_related(
+            'reservation').exclude(
+            Q(reservation__datetime_from__range=(datetime_from, datetime_to)) | Q(
+                reservation__datetime_to__range=(datetime_to, datetime_to))
+        ).exclude(
+            reservation__datetime_from__lte=datetime_from,
+            reservation__datetime_to__gte=datetime_to
+        ).exclude(
+            reservation__datetime_from__lte=datetime_to,
+            reservation__datetime_to__gte=datetime_from
+        )
+        serializer = OfficeReservationSerializer(time, many=True)
+        return Response(serializer.data)
 
 
 class ReservationAPI(CreateUpdateDestroyListRetrieve, viewsets.GenericViewSet):
@@ -122,22 +150,3 @@ class ReservationAPI(CreateUpdateDestroyListRetrieve, viewsets.GenericViewSet):
         self.check_object_permissions(self.request, instance)
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-    def list(self, request, *args, **kwargs):
-
-        datetime_from = self.kwargs['datetime_from']
-        datetime_to = self.kwargs['datetime_to']
-
-        free_time_rent = Office.objects.prefetch_related(
-            'reservations').exclude(
-            Q(reservation__date_from__range=(datetime_from, datetime_to)) | Q(
-                reservation__date_to__range=(datetime_to, datetime_to))
-        ).exclude(
-            reservation__date_from__lte=datetime_from,
-            reservation__date_to__gte=datetime_to
-        ).exclude(
-            reservation__date_from__lte=datetime_to,
-            reservation__date_to__gte=datetime_from
-        )
-        serializer = OfficeSerializer(free_time_rent, many=True)
-        return Response(serializer.data)
