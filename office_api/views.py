@@ -131,7 +131,7 @@ class ReservationAPI(CreateUpdateDestroyListRetrieve, viewsets.GenericViewSet):
         free_time_rent = Office.objects.prefetch_related(
             'reservations').exclude(
             Q(reservation__date_from__range=(date_from, date_to)) | Q(
-                reservations__date_to__range=(date_to, date_to))
+                reservation__date_to__range=(date_to, date_to))
         ).exclude(
             reservation__date_from__lte=date_from,
             reservation__date_to__gte=date_to
