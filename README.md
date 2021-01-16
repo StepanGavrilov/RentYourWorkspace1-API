@@ -2,6 +2,6 @@
 
 
 <h1>1. API </h1>
-<img src="https://github.com/StepanGavrilov/RentYourWorkspace-API/blob/master/swagger.png">
+<img src="https://github.com/StepanGavrilov/RentYourWorkspace1-API/blob/master/swagger.png">
 
 
