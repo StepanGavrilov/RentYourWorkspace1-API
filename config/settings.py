@@ -69,8 +69,8 @@ DATABASES = {
         'NAME': 'rentworkplace',
         'USER': 'postgres',
         'PASSWORD': '1',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'HOST': '192.168.1.44',
+        'PORT': '6122',
     }
 }
 
@@ -154,3 +154,4 @@ import dj_database_url
 
 prod_db = dj_database_url.config(conn_max_age=500)
 DATABASES['default'].update(prod_db)
+
