@@ -38,6 +38,8 @@ class OfficeUpdateSerializer(serializers.ModelSerializer):
 class ReservationSerializer(serializers.ModelSerializer):
 
     customer = AccountSerializer()
+    datetime_from = serializers.DateTimeField(required=False)
+    datetime_to = serializers.DateTimeField(required=False)
 
     class Meta:
         model = Reservation

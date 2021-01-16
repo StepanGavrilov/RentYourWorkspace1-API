@@ -1,10 +1,11 @@
+from django.db.models import Q
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 
 from .base.classes import CreateUpdateDestroyListRetrieve
 
 from .models import Reservation, Office
-from .serializers import OfficeSerializer, OfficeUpdateSerializer, ReservationSerializer,\
+from .serializers import OfficeSerializer, OfficeUpdateSerializer, ReservationSerializer, \
     ReservationCreateUpdateSerializer
 
 
@@ -121,3 +122,22 @@ class ReservationAPI(CreateUpdateDestroyListRetrieve, viewsets.GenericViewSet):
         self.check_object_permissions(self.request, instance)
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def list(self, request, *args, **kwargs):
+
+        date_from = self.kwargs['date_from']
+        date_to = self.kwargs['date_to']
+
+        free_time_rent = Office.objects.prefetch_related(
+            'booking').exclude(
+            Q(booking__date_from__range=(date_from, date_to)) | Q(
+                booking__date_to__range=(date_to, date_to))
+        ).exclude(
+            booking__date_from__lte=date_from,
+            booking__date_to__gte=date_to
+        ).exclude(
+            booking__date_from__lte=date_to,
+            booking__date_to__gte=date_from
+        )
+        serializer = OfficeSerializer(free_time_rent, many=True)
+        return Response(serializer.data)
