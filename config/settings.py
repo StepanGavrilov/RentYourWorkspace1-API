@@ -72,8 +72,6 @@ DATABASES = {
         'NAME': 'rentworkplace',
         'USER': 'postgres',
         'PASSWORD': '1',
-        'HOST': '192.168.1.44',
-        'PORT': '6122',
     }
 }
 
