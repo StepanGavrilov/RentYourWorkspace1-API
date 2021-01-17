@@ -7,7 +7,9 @@
 <p>
  DB Engine: 'django.db.backends.postgresql_psycopg2'
 <p>
-
+<p>
+ При боевом запуске желательно изменить подключить develop settings и заполнить env. файл секретными данными.
+<p>
 
 
 <h1>1. API </h1>
