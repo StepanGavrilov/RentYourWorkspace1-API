@@ -2,7 +2,9 @@
 
 <p>
  Сервис по аренду рабочих мест в офисах
+<p>
  Аунтефикация сделана на Simple JWT
+<p>
  DB Engine: 'django.db.backends.postgresql_psycopg2'
 <p>
 
